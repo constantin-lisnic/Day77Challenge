@@ -14,13 +14,19 @@ class MemoryItem: Identifiable, Codable, Comparable, Hashable {
     enum CodingKeys: String, CodingKey {
         case _name = "name"
         case _photo = "photo"
+        case _latitude = "latitude"
+        case _longitude = "longitude"
     }
 
     var name: String = ""
     var photo: Data
+    var latitude: Double?
+    var longitude: Double?
 
-    init(photo: Data) {
+    init(photo: Data, latitude: Double?, longitude: Double?) {
         self.photo = photo
+        self.latitude = latitude
+        self.longitude = longitude
     }
 
     var uiImage: UIImage {
@@ -30,6 +36,14 @@ class MemoryItem: Identifiable, Codable, Comparable, Hashable {
         return image
     }
 
+    var coordinate: CLLocationCoordinate2D? {
+        if let latitude, let longitude {
+            return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        }
+        
+        return nil
+    }
+
     static func < (lhs: MemoryItem, rhs: MemoryItem) -> Bool {
         lhs.name < rhs.name
     }
@@ -37,7 +51,7 @@ class MemoryItem: Identifiable, Codable, Comparable, Hashable {
     static func == (lhs: MemoryItem, rhs: MemoryItem) -> Bool {
         ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
     }

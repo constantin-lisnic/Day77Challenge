@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var isShowingPostUpdateView = false
 
     let url = URL.documentsDirectory.appending(path: "memories.json")
+    let locationFetcher = LocationFetcher()
 
     init() {
         do {
@@ -75,6 +76,9 @@ struct ContentView: View {
                     }
                 }
             }
+            .onAppear {
+                locationFetcher.start()
+            }
         }
     }
 
@@ -85,7 +89,11 @@ struct ContentView: View {
                     type: Data.self)
             else { return }
 
-            newMemory = MemoryItem(photo: imageData)
+            let location = locationFetcher.lastKnownLocation
+
+            newMemory = MemoryItem(
+                photo: imageData, latitude: location?.latitude,
+                longitude: location?.longitude)
 
             guard let newMemory else { return }
 
